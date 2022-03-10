@@ -87,11 +87,12 @@ void MyADVANCE(int m1,int m2,int m3,int m4 )
   //m1
   if (m1>0)
   {
-    MOTORA_FORWARD(m1);
+     MOTORA_BACKOFF(m1);
+    
   }
 else
   {
-    MOTORA_BACKOFF(m1);
+   MOTORA_FORWARD(m1);
   }
 //m2:
   if (m2>0)
@@ -105,11 +106,12 @@ else
   //m3
     if (m3>0)
   {
-    MOTORC_FORWARD(m3);
+   MOTORC_BACKOFF(m3);    
   }
 else
   {
-   MOTORC_BACKOFF(m3);
+
+   MOTORC_FORWARD(m3);
   }
   //m4
     if (m4>0)
