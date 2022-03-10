@@ -241,8 +241,10 @@ void UpdateArduino()
   Serial.println("Start Updating Arduino");
   Serial.println("Updating Arduino ~ ");
   ADVANCE(number_1,number_2,number_3,number_4);
-  delay(number_5*100);
+  Serial.println("waiting ...");
+  delay(number_5*10);
   ADVANCE(0,0,0,0);
+  Serial.println("Stop");
   Serial.println(" End Updating ~ ");
 }
 
