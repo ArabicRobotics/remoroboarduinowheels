@@ -243,7 +243,7 @@ void UpdateArduino()
   ADVANCE(number_1,number_2,number_3,number_4);
   Serial.println("waiting ...");
   delay(number_5*10);
-  ADVANCE(0,0,0,0);
+  STOP();
   Serial.println("Stop");
   Serial.println(" End Updating ~ ");
 }
