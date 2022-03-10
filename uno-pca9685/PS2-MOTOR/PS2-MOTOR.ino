@@ -82,7 +82,45 @@ void ADVANCE(uint8_t pwm_A,uint8_t pwm_B,uint8_t pwm_C,uint8_t pwm_D)
   MOTORA_BACKOFF(Motor_PWM);MOTORB_FORWARD(Motor_PWM);    
   MOTORC_BACKOFF(Motor_PWM);MOTORD_FORWARD(Motor_PWM);    
 }
-
+void MyADVANCE(int m1,int m2,int m3,int m4 )
+{
+  //m1
+  if (m1>0)
+  {
+    MOTORA_FORWARD(m1);
+  }
+else
+  {
+  MOTORA_BACKOFF(m1);
+  }
+//m2:
+  if (m2>0)
+  {
+    MOTORB_FORWARD(m2);
+  }
+else
+  {
+  MOTORB_BACKOFF(m2);
+  }
+  //m3
+    if (m3>0)
+  {
+    MOTORC_FORWARD(m3);
+  }
+else
+  {
+  MOTORC_BACKOFF(m3);
+  }
+  //m4
+    if (m4>0)
+  {
+    MOTORD_FORWARD(m4);
+  }
+else
+  {
+  MOTORD_BACKOFF(m4);
+  }
+}
 //    ↓A-----B↓ 
 //     |  |  |
 //     |  ↓  |
@@ -240,7 +278,7 @@ void UpdateArduino()
   
   Serial.println("Start Updating Arduino");
   Serial.println("Updating Arduino ~ ");
-  ADVANCE(number_1,number_2,number_3,number_4);
+  MyADVANCE(number_1,number_2,number_3,number_4);
   Serial.println("waiting ...");
   delay(number_5*10);
   STOP();
