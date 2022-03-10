@@ -2,18 +2,28 @@
 #include "FaBoPWM_PCA9685.h"
 
 //#include "servo.hpp"
+// DFFENItion
+//Serial DEF
+const byte numChars = 32;
+char receivedChars[numChars];   // an array to store the received data
+boolean newData = false;
+int number_1;
+int number_2;
+int number_3;
+int number_4;
+int number_5;
+//End Serial DEF
 
+// Wheels Deff
 FaBoPWM faboPWM;
 int pos = 0;
 int MAX_VALUE = 2000;   // 电机速度限制 motor speed 
 int MIN_VALUE = 300;
-
 //PS2手柄引脚；PS2 handle Pin
 #define PS2_DAT        13
 #define PS2_CMD        11
 #define PS2_SEL        10
 #define PS2_CLK        12
-
 //MOTOR CONTROL Pin
 #define DIRA1 0
 #define DIRA2 1
@@ -23,23 +33,17 @@ int MIN_VALUE = 300;
 #define DIRC2 5
 #define DIRD1 6
 #define DIRD2 7
-
 char speed;
 // #define pressures   true
 #define pressures   false
 // #define rumble      true
 #define rumble      false
-
-PS2X ps2x; // create PS2 Controller Class
-
 //right now, the library does NOT support hot pluggable controllers, meaning
 //you must always either restart your Arduino after you connect the controller,
 //or call config_gamepad(pins) again after connecting the controller.
-
 int error = 0;
 byte type = 0;
 byte vibrate = 0;
-
 void (* resetFunc) (void) = 0;
 
 //电机控制，前进、后退、停止   motor control advance\back\stop
@@ -58,25 +62,17 @@ void (* resetFunc) (void) = 0;
 #define MOTORD_FORWARD(pwm)    do{faboPWM.set_channel_value(DIRD1,pwm);faboPWM.set_channel_value(DIRD2, 0);}while(0)
 #define MOTORD_STOP(x)         do{faboPWM.set_channel_value(DIRD1,0);faboPWM.set_channel_value(DIRD2, 0);}while(0)
 #define MOTORD_BACKOFF(pwm)    do{faboPWM.set_channel_value(DIRD1,0);faboPWM.set_channel_value(DIRD2, pwm);}while(0)
-
 #define SERIAL  Serial
-
-//#define SERIAL  Serial3
-
 #define LOG_DEBUG
-
 #ifdef LOG_DEBUG
 #define M_LOG SERIAL.print
 #else
 #define M_LOG 
 #endif
-
 //PWM参数
 #define MAX_PWM   2000
 #define MIN_PWM   300
-
 int Motor_PWM = 1900;
- 
 //控制电机运动    宏定义
 //    ↑A-----B↑   
 //     |  ↑  |
@@ -182,32 +178,7 @@ void STOP()
   MOTORC_STOP(Motor_PWM);MOTORD_STOP(Motor_PWM);
 }
 
-//串口输入控制
-void Serial_Control()
-{
-  char Serial_Data=0;
-  if(Serial.available())
-  {
-    Serial_Data = Serial.read();
-  }
-  switch(Serial_Data)
-  {
-     case 'A':  ADVANCE(500,500,500,500);  M_LOG("Run!\r\n");        break;
-     case 'B':  RIGHT_1();  M_LOG("Right up!\r\n");     break;
-     case 'C':  rotate_2();                            break;      
-     case 'D':  RIGHT_3();  M_LOG("Right down!\r\n");   break;
-     case 'E':  BACK();     M_LOG("Run!\r\n");          break;
-     case 'F':  LEFT_3();   M_LOG("Left down!\r\n");    break;
-     case 'G':  rotate_1();                              break;         
-     case 'H':  LEFT_1();   M_LOG("Left up!\r\n");     break;
-     case 'Z':  STOP();     M_LOG("Stop!\r\n");        break;
-     case 'z':  STOP();     M_LOG("Stop!\r\n");        break;
-     case 'd':  LEFT_2();   M_LOG("Left!\r\n");        break;
-     case 'b':  RIGHT_2();  M_LOG("Right!\r\n");        break;
-     case 'L':  Motor_PWM = 1500;                      break;
-     case 'M':  Motor_PWM = 500;                       break;
-   }
-}
+
 
 void IO_init()
 {
@@ -243,7 +214,119 @@ void loop()
     if you don't enable the rumble, use ps2x.read_gamepad(); with no values
     You should call this at least once a second
   */
-  
-Serial_Control();
+SerialLoop();
     delay(20);
+    
   }
+
+////////////////////////Serial Methods ////
+
+void SerialLoop()
+{ 
+  
+   recvWithEndMarker();
+   showNewData();
+   if (newData)
+   {
+      parseData();
+   }  
+  
+}
+
+
+
+//Updating Arduino Methods
+void UpdateArduino()
+{
+  
+  Serial.println("Start Updating Arduino");
+  Serial.println("Updating Arduino ~ ");
+  ADVANCE(number_1,number_2,number_3,number_4);
+  delay(number_5*100);
+  ADVANCE(0,0,0,0);
+  Serial.println(" End Updating ~ ");
+}
+
+// SerialMethods //
+void recvWithEndMarker()
+{
+   static byte ndx = 0;
+   char endMarker = '>';
+   char startMarker = '<';
+   char rc;
+   while (Serial.available() > 0 && newData == false)
+   {    
+      rc = Serial.read();
+      if (rc==startMarker)
+      {
+        rc = Serial.read();
+      }
+  switch(rc)
+  {
+     case 'A':  ADVANCE(500,500,500,500);  M_LOG("Run!\r\n");        break;
+     case 'B':  RIGHT_1();  M_LOG("Right up!\r\n");     break;
+     case 'C':  rotate_2();                            break;      
+     case 'D':  RIGHT_3();  M_LOG("Right down!\r\n");   break;
+     case 'E':  BACK();     M_LOG("Run!\r\n");          break;
+     case 'F':  LEFT_3();   M_LOG("Left down!\r\n");    break;
+     case 'G':  rotate_1();                              break;         
+     case 'H':  LEFT_1();   M_LOG("Left up!\r\n");     break;
+     case 'Z':  STOP();     M_LOG("Stop!\r\n");        break;
+     case 'z':  STOP();     M_LOG("Stop!\r\n");        break;
+     case 'd':  LEFT_2();   M_LOG("Left!\r\n");        break;
+     case 'b':  RIGHT_2();  M_LOG("Right!\r\n");        break;
+     case 'L':  Motor_PWM = 1500;                      break;
+     case 'M':  Motor_PWM = 500;                       break;
+   }
+      
+      if (rc != endMarker)
+      {
+         receivedChars[ndx] = rc;
+         ndx++;
+         if (ndx >= numChars)
+         {
+            ndx = numChars - 1;
+         }
+      }
+      else
+      {
+         receivedChars[ndx] = '>'; // terminate the string
+         ndx = 0;
+         newData = true;
+      }
+   }
+}
+
+void showNewData()
+{
+   if (newData == true)
+   {
+      Serial.print("This just in ... ");
+      Serial.println(receivedChars);
+      //newData = false;
+   }
+}
+
+void parseData()
+{
+   char *strings[8]; // an array of pointers to the pieces of the above array after strtok()
+   char *ptr = NULL; byte index = 0;
+   ptr = strtok(receivedChars, ",");  // delimiters, semicolon
+   while (ptr != NULL)
+   {
+      strings[index] = ptr;
+      index++;
+      ptr = strtok(NULL, ",");
+   }   
+   // convert string data to numbers
+   number_1 = atoi(strings[0]);
+   number_2 = atoi(strings[1]);
+   number_3 = atoi(strings[2]);
+   number_4 = atoi(strings[3]);
+   number_5 = atoi(strings[4]);
+   UpdateArduino(); 
+   newData = false;
+}
+
+
+  
