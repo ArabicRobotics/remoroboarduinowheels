@@ -254,7 +254,7 @@ void loop()
     You should call this at least once a second
   */
 SerialLoop();
-    delay(20);
+    //delay(5);
     
   }
 
@@ -282,8 +282,8 @@ void UpdateArduino()
   Serial.println("Updating Arduino ~ ");
   MyADVANCE(number_1,number_2,number_3,number_4);
   Serial.println("waiting ...");
-  delay(number_5*10);
-  STOP();
+  delay(10);
+  //STOP();
   Serial.println("Stop");
   Serial.println(" End Updating ~ ");
 }
