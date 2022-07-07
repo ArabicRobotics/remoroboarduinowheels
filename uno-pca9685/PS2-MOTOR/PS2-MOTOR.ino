@@ -5,6 +5,7 @@
 //Serial DEF
 const byte numChars = 32;
 char receivedChars[numChars];   // an array to store the received data
+char questionremovalChars[numChars-1];   // an array to store the received data
 boolean newData = false;
 int number_1;
 int number_2;
@@ -347,12 +348,20 @@ void showNewData()
       //newData = false;
    }
 }
+void questionremoval()
+{
+  char questionremovalChars[numChars-1];   // an array to store the received data
+
+  for (int i = 1; i < sizeof (receivedChars)-1 ; i++) {
+    questionremovalChars[i]= receivedChars[i];
+  }
+}
 
 void parseData()
 {
    char *strings[8]; // an array of pointers to the pieces of the above array after strtok()
-   char *ptr = NULL; byte index = 1;
-   ptr = strtok(receivedChars, ",");  // delimiters, semicolon
+   char *ptr = NULL; byte index = 0;
+   ptr = strtok(questionremovalChars, ",");  // delimiters, semicolon
 
    while (ptr != NULL)
    {
