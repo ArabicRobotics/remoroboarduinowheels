@@ -296,7 +296,7 @@ void recvWithEndMarker()
    char startMarker = '<';
    char rc;
    while (Serial.available() > 0 && newData == false)
-   {    
+   {
       rc = Serial.read();
       if (rc==startMarker)
       {
@@ -351,20 +351,31 @@ void showNewData()
 void parseData()
 {
    char *strings[8]; // an array of pointers to the pieces of the above array after strtok()
-   char *ptr = NULL; byte index = 0;
+   char *ptr = NULL; byte index = 1;
    ptr = strtok(receivedChars, ",");  // delimiters, semicolon
+
    while (ptr != NULL)
    {
       strings[index] = ptr;
       index++;
       ptr = strtok(NULL, ",");
-   }   
+   }
    // convert string data to numbers
    number_1 = atoi(strings[0]);
    number_2 = atoi(strings[1]);
    number_3 = atoi(strings[2]);
    number_4 = atoi(strings[3]);
    number_5 = atoi(strings[4]);
+   Serial.println("Number1");
+   Serial.println("Number2");
+   Serial.println("Number3");
+   Serial.println("Number4");
+   Serial.println("Number5");
+   Serial.println(number_1);
+   Serial.println(number_2);
+   Serial.println(number_3);
+   Serial.println(number_4);
+   Serial.println(number_5);
    UpdateArduino(); 
    newData = false;
 }
