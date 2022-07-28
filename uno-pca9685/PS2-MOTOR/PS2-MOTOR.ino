@@ -3,7 +3,7 @@
 //#include "servo.hpp"
 // DFFENItion
 //Serial DEF
-const byte numChars = 32;
+const byte numChars = 50;
 char receivedChars[numChars];   // an array to store the received data
 char questionremovalChars[numChars-1];   // an array to store the received data
 boolean newData = false;
@@ -228,7 +228,7 @@ void IO_init()
 void setup()
 {
    IO_init();
-   SERIAL.begin(9600);
+   Serial.begin(9600);
   if(faboPWM.begin()) 
   {
     Serial.println("Find PCA9685");
@@ -265,9 +265,10 @@ void SerialLoop()
 { 
   
    recvWithEndMarker();
-   showNewData();
+   //showNewData();
    if (newData)
    {
+    questionremoval();
       parseData();
    }  
   
@@ -280,12 +281,12 @@ void UpdateArduino()
 {
   
   Serial.println("Start Updating Arduino");
-  Serial.println("Updating Arduino ~ ");
+  //Serial.println("Updating Arduino ~ ");
   MyADVANCE(number_1,number_2,number_3,number_4);
   Serial.println("waiting ...");
   delay(10);
   //STOP();
-  Serial.println("Stop");
+  //Serial.println("Stop");
   Serial.println(" End Updating ~ ");
 }
 
@@ -350,11 +351,15 @@ void showNewData()
 }
 void questionremoval()
 {
-  char questionremovalChars[numChars-1];   // an array to store the received data
 
-  for (int i = 1; i < sizeof (receivedChars)-1 ; i++) {
-    questionremovalChars[i]= receivedChars[i];
+  for (int i = 0; i < numChars+1; i++) {
+    //Serial.println("trim : ");
+    //Serial.println(receivedChars[i]);
+    questionremovalChars[i]= receivedChars[i+1];
   }
+  //Serial.println("After Removal : ");
+  //Serial.println(questionremovalChars);
+  
 }
 
 void parseData()
@@ -362,12 +367,12 @@ void parseData()
    char *strings[8]; // an array of pointers to the pieces of the above array after strtok()
    char *ptr = NULL; byte index = 0;
    ptr = strtok(questionremovalChars, ",");  // delimiters, semicolon
-
    while (ptr != NULL)
    {
       strings[index] = ptr;
       index++;
       ptr = strtok(NULL, ",");
+      //Serial.println(ptr);
    }
    // convert string data to numbers
    number_1 = atoi(strings[0]);
@@ -375,16 +380,16 @@ void parseData()
    number_3 = atoi(strings[2]);
    number_4 = atoi(strings[3]);
    number_5 = atoi(strings[4]);
-   Serial.println("Number1");
-   Serial.println("Number2");
-   Serial.println("Number3");
-   Serial.println("Number4");
-   Serial.println("Number5");
-   Serial.println(number_1);
-   Serial.println(number_2);
-   Serial.println(number_3);
-   Serial.println(number_4);
-   Serial.println(number_5);
+   //Serial.println("Number1");
+   //Serial.println("Number2");
+   //Serial.println("Number3");
+   //Serial.println("Number4");
+   //Serial.println("Number5");
+   //Serial.println(number_1);
+   //Serial.println(number_2);
+   //Serial.println(number_3);
+   //Serial.println(number_4);
+   //Serial.println(number_5);
    UpdateArduino(); 
    newData = false;
 }
